@@ -1,0 +1,49 @@
+---
+- name: Create ec2 instances for XAP web ui
+  hosts: localhost
+  connection: local
+  gather_facts: False
+  
+  tasks:
+  - name: create web ui machine 
+    local_action:
+      module: ec2
+      key_name: "{{key_name}}"
+      region: "{{aws_region}}"
+      group_id: "{{security_group}}"
+      instance_type: "{{instance_type}}"
+      image: "{{ami_id}}"
+      wait: yes            
+      instance_tags:
+        Name: lc-xap-webui
+    register: ec2
+
+  - name: Add all instance public IPs to host group
+    add_host: hostname={{ item.public_ip }} groups=webuihosts
+    with_items: ec2.instances
+
+  - name: Wait for SSH to come up
+    wait_for: host={{ item.public_dns_name }} port=22 delay=60 timeout=320 state=started
+    with_items: ec2.instances  
+
+- hosts: webuihosts
+  name: install XAP webui play
+  user: "{{user}}"
+  gather_facts: true
+  roles:
+    - install_java    
+  tasks:  
+  - name: fetch XAP
+    get_url: url="{{xap_url}}" dest={{home_dir}} mode=0777
+  - name: exctract XAP
+    unarchive: src="{{home_dir}}/{{zip_name}}" dest={{home_dir}} mode=0777 copy=no
+  - name: rename XAP home folder
+    command: mv {{xap_folder}} gshome chdir={{home_dir}}
+  - name: copy locators file
+    copy: src=locators.txt dest={{home_dir}} owner={{user}} mode=0777
+  - name: copy install script
+    copy: src=files/run-webui.sh dest={{home_dir}} owner={{user}} mode=0777  
+  - name: deploy XAP webui
+    shell: "nohup ./run-webui.sh {{lookup_groups}} {{home_dir}}/gshome &"
+    args:
+      chdir: "{{home_dir}}"
