@@ -1,0 +1,14 @@
+# Variables listed here are applicable to all host groups
+key_name: ec2-kobi
+aws_region: us-east-1
+security_group: sg-7f073115
+ami_id: ami-b354e5da
+instance_type: m1.large
+mgt_instance_count: 2
+agents_instance_count: 18
+lookup_groups: largecluster
+home_dir: /home/ec2-user
+user: ec2-user
+zip_name: gigaspaces-xap-premium-11.0.0-m11-b14711-188.zip
+xap_folder: gigaspaces-xap-premium-11.0.0-m11
+xap_url: http://gigaspaces-repository-eu.s3.amazonaws.com/com/gigaspaces/xap-core/11.0.0-SNAPSHOT/gigaspaces-xap-premium-11.0.0-m11-b14711-188.zip
