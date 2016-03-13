@@ -4,4 +4,4 @@
 - name: Unpack archive
   command: "tar -zxf {{java_archive}} -C {{download_folder}} creates={{java_name}}"
 - name: Rename JAVA folder
-  command: mv jdk1.8.0_05 java chdir=/home/ec2-user  
+  command: mv jdk1.8.0_05 java chdir={{download_folder}}

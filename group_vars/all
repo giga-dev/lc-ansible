@@ -1,14 +1,40 @@
-# Variables listed here are applicable to all host groups
+### ec2 configuration
+
 key_name: ec2-kobi
 aws_region: us-east-1
 security_group: sg-7f073115
 ami_id: ami-b354e5da
 instance_type: m1.large
+user: ec2-user
+home_dir: /home/ec2-user
 mgt_instance_count: 2
 agents_instance_count: 18
+
+### XAP configuration
+xap_url: http://repository.cloudifysource.org/com/gigaspaces/xap-core/11.0.0-SNAPSHOT/gigaspaces-xap-premium-11.0.0-ga-b14714-536.zip
+
+### The below configuration is RARELY changed
 lookup_groups: largecluster
-home_dir: /home/ec2-user
-user: ec2-user
-zip_name: gigaspaces-xap-premium-11.0.0-m10-b14710-827.zip
-xap_folder: gigaspaces-xap-premium-11.0.0-m10
-xap_url: http://repository.cloudifysource.org/com/gigaspaces/xap-core/11.0.0-SNAPSHOT/gigaspaces-xap-premium-11.0.0-m10-b14710-827.zip
+lus_port: 4242
+interface_name: eth0
+lrmi_comm_min_port: 7122
+lrmi_comm_max_port: 7222
+gs_http_port: 7104
+gs_registry_port: 7102
+gsa_java_options: -Xmx512m -Dcom.gs.agent.auto-shutdown-enabled=true -Dcom.gs.security.enabled=false
+gsm_java_options: -Xmx512m -Xms512m -Dcom.gs.grid.gsm.pending-dispatch-delay=5000 -Dgsm.excludeGscOnFailedInstance.disabled=true -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Xmn100m -XX:ParallelGCThreads=4 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/oom.hprof -Dcom.gs.transport_protocol.lrmi.connect_timeout=30000
+lus_java_options: -Xmx512m -Xms512m -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Xmn100m -XX:ParallelGCThreads=4 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/oom.hprof -Dcom.gs.transport_protocol.lrmi.connect_timeout=30000
+gsc_java_options: -Xmx1300m -Xms1300m -Dcom.gigaspaces.grid.gsc.serviceLimit=5 -Dcom.gs.security.enabled=false -Dcom.gs.transport_protocol.lrmi.trackActivity=true -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Xmn100m -XX:ParallelGCThreads=4 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/oom.hprof -Dcom.gs.transport_protocol.lrmi.connect_timeout=30000
+ext_java_options: -Dcom.sun.jini.reggie.initialUnicastDiscoveryPort={{lus_port}} -Dcom.gs.multicast.discoveryPort={{lus_port}} -Dcom.gs.multicast.enabled=false -Dcom.gs.transport_protocol.lrmi.bind-port={{lrmi_comm_min_port}}-{{lrmi_comm_max_port}} -Dcom.gigaspaces.start.httpPort={{gs_http_port}} -Dcom.gigaspaces.system.registryPort={{gs_registry_port}}
+webui_options: -Xmx1g -Xms512m -Dcom.gigaspaces.webui.lifecycle.level=FINER -Dcom.gigaspaces.webui.admin.level=FINE -XX:+UseConcMarkSweepGC -XX:+UseParNewGC -Xmn700m -XX:ParallelGCThreads=4 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/oom_webui.hprof -Dcom.gs.transport_protocol.lrmi.connect_timeout=30000
+webui_port: 8099
+mgt_global_lus_cnt: 0
+mgt_lus_cnt: 1
+mgt_global_gsm_cnt: 0
+mgt_gsm_cnt: 1
+mgt_gsc_cnt: 0
+agt_global_lus_cnt: 0
+agt_lus_cnt: 0
+agt_global_gsm_cnt: 0
+agt_gsm_cnt: 0
+agt_gsc_cnt: 4

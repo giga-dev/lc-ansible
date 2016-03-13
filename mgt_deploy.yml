@@ -37,15 +37,45 @@
   gather_facts: true
   roles:
     - install_java
+  environment:
+    XAP_HOME: "{{home_dir}}/gshome"
+    LOOKUPGROUPS: "{{lookup_groups}}"
+    XAP_LOOKUP_GROUPS: "{{lookup_groups}}"
+    GSA_JAVA_OPTIONS: "{{gsa_java_options}}"
+    XAP_GSA_OPTIONS: "{{gsa_java_options}}"
+    GSC_JAVA_OPTIONS: "{{gsc_java_options}}"
+    XAP_GSC_OPTIONS: "{{gsc_java_options}}"
+    GSM_JAVA_OPTIONS: "{{gsm_java_options}}"
+    XAP_GSM_OPTIONS: "{{gsm_java_options}}"
+    LUS_JAVA_OPTIONS: "{{lus_java_options}}"
+    XAP_LUS_OPTIONS: "{{lus_java_options}}"
+    EXT_JAVA_OPTIONS: "{{ext_java_options}}"
+    INTERFACE_NAME: "{{interface_name}}"
+    MGT_GLOBAL_LUS_CNT: "{{mgt_global_lus_cnt}}"
+    MGT_LUS_CNT: "{{mgt_lus_cnt}}"
+    MGT_GLOBAL_GSM_CNT: "{{mgt_global_gsm_cnt}}"
+    MGT_GSM_CNT: "{{mgt_gsm_cnt}}"
+    MGT_GSC_CNT: "{{mgt_gsc_cnt}}"
   tasks:
   - name: fetch XAP
     get_url: url="{{xap_url}}" dest={{home_dir}} mode=0777
+  - name: get zip file name
+    shell: "ls gigaspaces*.zip"
+    args:
+      chdir: "{{home_dir}}"
+    register: zip_name
   - name: exctract XAP
-    unarchive: src="{{home_dir}}/{{zip_name}}" dest={{home_dir}} mode=0777 copy=no
+    unarchive: src="{{home_dir}}/{{zip_name.stdout}}" dest={{home_dir}} mode=0777 copy=no
+  - name: delete zip
+    command: "rm {{home_dir}}/{{zip_name.stdout}}"
   - name: rename XAP home folder
-    command: mv {{xap_folder}} gshome chdir={{home_dir}}
+    shell: "mv `ls -d {{home_dir}}/gigaspaces*premium*` gshome"
+    args:
+      chdir: "{{home_dir}}"
   - name: copy locators file
     copy: src=locators.txt dest={{home_dir}} owner={{user}} mode=0777
+  - name: copy env script
+    copy: src=files/env.sh dest={{home_dir}} owner={{user}} mode=0777
   - name: copy run script
     copy: src=files/run-mgt.sh dest={{home_dir}} owner={{user}} mode=0777  
   - name: deploy XAP mgt
