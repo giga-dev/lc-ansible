@@ -10,6 +10,5 @@
       ignore_errors: yes
 
 - include: mgt_deploy.yml
-- include: agents_deploy.yml
 - include: ui_deploy.yml
-
+- include: agents_deploy.yml
